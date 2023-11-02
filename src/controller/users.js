@@ -45,12 +45,12 @@ const getUserRecipes = async (req, res) => {
   try {
     const userRecipes = await userModels.getRecipesByUser(userId);
     res.json({
-      message: "Daftar resep yang dibuat oleh pengguna",
+      message: "List of recipes created by users",
       data: userRecipes,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Gagal mengambil daftar resep pengguna" });
+    res.status(500).json({ message: "Failed to retrieve user recipe list" });
   }
 };
 
