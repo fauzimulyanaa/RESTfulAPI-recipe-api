@@ -1,19 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controller/users");
+const { Protect } = require("../middleware/private");
+const upload = require("../middleware/upload");
 
-router.get("/search", usersController.searchUsers);
-router.get("/sort", usersController.UsersSortedByUsername);
-router.get("/page", usersController.usersPage);
+// router.get("/search", usersController.searchUsers);
 
-router.get("/:userId/recipe", usersController.getUserRecipes);
-// CREATE NEW USERS
-router.post("/", usersController.createNewUsers);
+// // CREATE NEW USERS
 
-// READ USERS
+// // READ USERS
 router.get("/", usersController.getAllUsers);
-router.get("/:id", usersController.getUsersById);
-router.patch("/:id", usersController.updateUser);
-router.delete("/:id", usersController.deleteUser);
+router.patch("/update-user", Protect, upload.single("photo_user"), usersController.updateUser);
+// router.delete("/:id", usersController.deleteUser);
 
 module.exports = router;

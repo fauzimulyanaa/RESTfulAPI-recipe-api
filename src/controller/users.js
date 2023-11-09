@@ -1,16 +1,7 @@
 const userModels = require("../model/users");
 const recipeModel = require("../model/recipes");
-
-const createNewUsers = async (req, res) => {
-  try {
-    const { username, password, email, full_name } = req.body;
-    let data = { username, password, email, full_name };
-    let result = await userModels.CreateUsers(data);
-    res.status(200).json({ message: "Create new users successful", data: data });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to create recipe", error: error.message });
-  }
-};
+const bcrypt = require("bcrypt");
+const cloudinary = require("../config/photo");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -26,10 +17,10 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUsersById = async (req, res) => {
-  const { id } = req.params;
+  const { uuid } = req.payload;
 
   try {
-    const user = await userModels.getUsersById(id);
+    const user = await userModels.getUsersById(uuid);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -40,124 +31,110 @@ const getUsersById = async (req, res) => {
   }
 };
 
-const getUserRecipes = async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const userRecipes = await userModels.getRecipesByUser(userId);
-    res.json({
-      message: "List of recipes created by users",
-      data: userRecipes,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to retrieve user recipe list" });
-  }
-};
-
 const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { username, password, email, full_name } = req.body;
+    const { username, email, password } = req.body;
+    const { uuid } = req.payload;
 
-    const users = await userModels.getUsersById(id);
+    const users = await userModels.getUsersById(uuid);
 
     if (!users) {
-      return res.status(404).json({ message: "Users not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     let updatedData = {
-      username: username || users.username,
-      password: password || users.password,
-      email: email || users.email,
-      full_name: full_name || users.full_name,
+      uuid: users.uuid,
+      username: users.username,
+      email: users.email,
+      password: users.password,
     };
 
-    const result = await userModels.updateUser(id, updatedData);
-    res.status(200).json({ message: "Users updated successfully", data: result });
+    if (username) {
+      updatedData.username = username;
+    }
+
+    if (email) {
+      updatedData.email = email;
+    }
+
+    if (password) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      updatedData.password = hashedPassword;
+    }
+
+    if (!req.file) {
+      updatedData.photo_user = users.photo_user;
+
+      let result = await recipeModel.updateRecipe(updatedData);
+
+      if (!result) {
+        return res.status(404).json({ messsage: "failed update data" });
+      }
+      return res.status(200).json({ messsage: "success update data" });
+    }
+
+    if (req.file) {
+      if (!req.isFileValid) {
+        return res.status(404).json({
+          messsage: "failed update data, photo must be image file",
+        });
+      }
+      const imageUpload = await cloudinary.uploader.upload(req.file.path, {
+        folder: "photo_users",
+      });
+
+      if (!imageUpload) {
+        return res.status(400).json({ messsage: "upload photo failed" });
+      }
+      updatedData.photo_user = imageUpload.secure_url;
+    }
+
+    const result = await userModels.updateUser(updatedData);
+
+    res.status(200).json({ message: "User updated successfully", data: result });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to update user" });
   }
 };
-const deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
+// const deleteUser = async (req, res) => {
+//   try {
+//     const userId = req.params.id;
 
-    await userModels.deleteUser(userId);
+//     await userModels.deleteUser(userId);
 
-    res.status(200).json({ message: "User and associated recipes deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to delete user and associated recipes" });
-  }
-};
+//     res.status(200).json({ message: "User and associated recipes deleted successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Failed to delete user and associated recipes" });
+//   }
+// };
 
-const searchUsers = async (req, res) => {
-  try {
-    const search = req.query.search;
-    if (!search) {
-      return res.status(400).json({ message: "Parameter require" });
-    }
+// const searchUsers = async (req, res) => {
+//   try {
+//     const search = req.query.search;
+//     if (!search) {
+//       return res.status(400).json({ message: "Parameter require" });
+//     }
 
-    const searchResults = await userModels.searchUser(search);
-    if (searchResults.length === 0) {
-      return res.status(404).json({ message: "Data not found" });
-    }
+//     const searchResults = await userModels.searchUser(search);
+//     if (searchResults.length === 0) {
+//       return res.status(404).json({ message: "Data not found" });
+//     }
 
-    res.status(200).json({ message: "Pencarian berhasil", data: searchResults });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Gagal melakukan pencarian" });
-  }
-};
-
-const UsersSortedByUsername = async (req, res) => {
-  try {
-    const { order } = req.query; // Mengambil parameter urutan dari permintaan
-
-    if (!order || (order !== "asc" && order !== "desc")) {
-      return res.status(400).json({ message: "Invalid order parameter" });
-    }
-
-    const users = await userModels.getUsersSortedByUsername(order);
-
-    if (users.length === 0) {
-      return res.status(404).json({ message: "No users found" });
-    }
-
-    res.status(200).json({ message: "Users sorted by username", data: users });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to retrieve users" });
-  }
-};
-
-const usersPage = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-
-    const users = await userModels.getUsersPagination(page, limit);
-
-    if (users.length === 0) {
-      return res.status(404).json({ message: "No users found" });
-    }
-
-    res.status(200).json({ message: "Users retrieved successfully", data: users });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to retrieve users" });
-  }
-};
+//     res.status(200).json({ message: "Pencarian berhasil", data: searchResults });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Gagal melakukan pencarian" });
+//   }
+// };
 
 module.exports = {
-  createNewUsers,
   getAllUsers,
   getUsersById,
   updateUser,
-  deleteUser,
-  getUserRecipes,
-  searchUsers,
-  UsersSortedByUsername,
-  usersPage,
+  // deleteUser,
+  // getUserRecipes,
+  // searchUsers,
 };

@@ -1,22 +1,5 @@
 const Pool = require("../config/database");
 
-const CreateUsers = async (data) => {
-  const { username, password, email, full_name } = data;
-
-  try {
-    const query = {
-      text: "INSERT INTO users(username, password, email, full_name) VALUES($1, $2, $3, $4) RETURNING *",
-      values: [username, password, email, full_name],
-    };
-
-    const result = await Pool.query(query);
-    return result.rows[0];
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create user" });
-  }
-};
-
 const getAllUsers = async () => {
   try {
     const query = "SELECT * FROM users";
@@ -31,7 +14,7 @@ const getAllUsers = async () => {
 
 const getUsersById = async (id) => {
   const query = {
-    text: "SELECT * FROM users WHERE id = $1",
+    text: "SELECT uuid, username, email, password, photo_user  FROM users WHERE uuid = $1",
     values: [id],
   };
 
@@ -59,17 +42,21 @@ const getRecipesByUser = async (userId) => {
   }
 };
 
-const updateUser = async (userId, newData) => {
-  const { username, password, email, full_name } = newData;
+const updateUser = async (newData) => {
+  const { username, email, password, photo_user, uuid } = newData;
   const query = `
     UPDATE users
-    SET username = $1, password = $2, email = $3, full_name = $4
-    WHERE id = $5
+    SET username = $1,  email = $2, password = $3, photo_user = $4
+    WHERE uuid = $5
     RETURNING *
   `;
 
-  const values = [newData.username, newData.password, newData.email, newData.full_name, userId];
+  const values = [username, email, password, photo_user, uuid];
   const result = await Pool.query(query, values);
+  if (result.rowCount === 0) {
+    // Tidak ada baris yang diupdate, mungkin karena UUID tidak sesuai
+    throw new Error("No user found for update.");
+  }
 
   return result.rows[0];
 };
@@ -121,7 +108,6 @@ const getUsersPagination = async (page, limit) => {
 };
 
 module.exports = {
-  CreateUsers,
   getAllUsers,
   getUsersById,
   updateUser,

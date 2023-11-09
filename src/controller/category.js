@@ -16,7 +16,7 @@ const getAllCategory = async (req, res) => {
   try {
     const data = await categoryModel.getAllCategory();
     res.status(200).json({
-      message: "Get al; category success",
+      message: "Get all category success",
       data: data,
     });
   } catch (error) {

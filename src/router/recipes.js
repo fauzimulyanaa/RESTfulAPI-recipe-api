@@ -1,25 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const recipesController = require("../controller/recipes");
-const usersController = require("../controller/users");
 
-router.get("/category/:id", recipesController.getRecipesByCategory);
-router.get("/search", recipesController.searchRecipesByCategory);
-router.get("/detail", recipesController.searchRecipes);
-router.get("/page", recipesController.recipesPage);
+const { Protect } = require("../middleware/private");
+const upload = require("../middleware/upload");
+
+router.get("/detail", Protect, recipesController.getRecipesDetail);
 
 // CREATE RECIPES
-router.post("/", recipesController.createNewRecipe);
+router.post("/create", Protect, upload.single("photo_recipes"), recipesController.createNewRecipe);
+router.get("/my-recipe", Protect, recipesController.getRecipesUser);
+router.get("/:id", Protect, recipesController.getRecipeById);
 
 // READ ALL RECIPES
-router.get("/", recipesController.getAllRecipes);
-// READ RECIPES BY ID
-router.get("/:id", recipesController.recipeById);
+router.get("/", Protect, recipesController.getAllRecipes);
 
 // UPDATE
-router.put("/:id", recipesController.updateRecipe);
+router.patch("/update-recipe/:id", Protect, upload.single("photo_recipes"), recipesController.updateRecipe);
 
 // DELETE RECIPES BY ID
-router.delete("/:id", recipesController.deleteRecipe);
+router.delete("/delete-recipe/:id", Protect, recipesController.deleteRecipe);
 
 module.exports = router;
