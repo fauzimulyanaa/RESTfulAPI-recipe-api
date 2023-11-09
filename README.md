@@ -16,7 +16,6 @@ dotenv
 jsonwebtoken
 morgan
 uuid
-nodemailer
 multer
 cloudinary
 
