@@ -8,7 +8,7 @@ const users = require("./router/users");
 const category = require("./router/category");
 const auth = require("./router/auth");
 const corsOptions = {
-  origin: "*",
+  origin: "http://localhost:5173",
   optionsSuccessStatus: 200,
 };
 
