@@ -8,12 +8,12 @@ const users = require("./router/users");
 const category = require("./router/category");
 const auth = require("./router/auth");
 
-app.use(cors({
-  origin: '*', // Adjust this based on your needs
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204,
-}));
+const corsOptions = {
+	origin : '*',
+	optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }));
 
 
