@@ -8,11 +8,8 @@ const category = require("./router/category");
 const auth = require("./router/auth");
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Replace with your frontend origin
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
+  origin: '*', 
   optionsSuccessStatus: 200,
-  allowedHeaders: 'Content-Type, Authorization', // Add any other headers you need
 };
 
 app.use(cors(corsOptions));
