@@ -168,7 +168,8 @@ const createNewRecipe = async (req, res, next) => {
 
     res.status(200).json({ message: "Success input data", data: result });
   } catch (error) {
-    res.status(500).json({ message: "A server error occurred" });
+    console.error("Error creating recipe:", error);
+    res.status(500).json({ message: "A server error occurred", error: error.message });
   }
 };
 
