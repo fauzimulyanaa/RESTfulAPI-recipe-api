@@ -9,9 +9,10 @@ const category = require("./router/category");
 const auth = require("./router/auth");
 
 const corsOptions = {
-	origin : '*',
-	optionsSuccessStatus: 200
-}
+  origin: 'http://localhost:5173', // replace with your frontend origin
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+};
 
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }));
