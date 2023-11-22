@@ -7,9 +7,12 @@ const recipes = require("./router/recipes");
 const users = require("./router/users");
 const category = require("./router/category");
 const auth = require("./router/auth");
-app.use(cors());
+const corsOptions = {
+  origin: "*",
+  optionsSuccessStatus: 200,
+};
 
-app.options('*', cors());
+app.use(cors(corsOptions));
 
 
 
