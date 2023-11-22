@@ -7,12 +7,13 @@ const recipes = require("./router/recipes");
 const users = require("./router/users");
 const category = require("./router/category");
 const auth = require("./router/auth");
-const corsOptions = {
-	origin : '*',
-	optionsSuccessStatus: 200
-}
 
-app.use(cors(corsOptions))
+app.use(cors({
+  origin: '*', // Adjust this based on your needs
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+}));
 app.use(express.urlencoded({ extended: false }));
 
 
