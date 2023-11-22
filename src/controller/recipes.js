@@ -135,7 +135,7 @@ const createNewRecipe = async (req, res, next) => {
     }
 
     if (!title || !description || !ingredients || !instructions || !category_id) {
-      return res.status(400).json({ message: "Failed input data" });
+      return res.status(400).json({message: "Failed input data: Missing required fields" });
     }
 
     let category = await categoryModel.getAllCategory();
