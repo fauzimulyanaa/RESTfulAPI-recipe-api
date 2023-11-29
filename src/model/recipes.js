@@ -124,14 +124,14 @@ const RecipeCreate = async (data) => {
 
 const updateRecipe = async (data) => {
   try {
-    const { title, photo_recipes, description, ingredients, instructions, category_id, user_id } = data;
+    const { id, title, photo_recipes, description, ingredients, instructions, category_id, user_id } = data;
     const query = `
       UPDATE recipes
-      SET title = $1, photo_recipes = $2, description = $3, ingredients = $4, instructions = $5, category_id = $6
-      WHERE user_id = $7
+      SET title = $2, photo_recipes = $3, description = $4, ingredients = $5, instructions = $6, category_id = $7
+      WHERE id = $1 AND user_id = $8
       RETURNING *
     `;
-    const values = [title, photo_recipes, description, ingredients, instructions, category_id, user_id]; // Tambahkan user_id ke values
+    const values = [id, title, photo_recipes, description, ingredients, instructions, category_id, user_id]; // Tambahkan user_id ke values
     const result = await Pool.query(query, values);
     return result.rows[0];
   } catch (error) {
