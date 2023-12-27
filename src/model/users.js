@@ -12,10 +12,10 @@ const getAllUsers = async () => {
   }
 };
 
-const getUsersById = async (id) => {
+const getUsersById = async (uuid) => {
   const query = {
-    text: "SELECT uuid, username, email, password, photo_user  FROM users WHERE uuid = $1",
-    values: [id],
+    text: "SELECT * FROM users WHERE uuid = $1",
+    values: [uuid],
   };
 
   const result = await Pool.query(query);

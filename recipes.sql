@@ -121,3 +121,13 @@ SELECT recipes.id, recipes.title, recipes.description, recipes.ingredients, reci
     WHERE uuid = '86d67c70-2368-4509-be9d-92045a303f8c'
 
     ALTER TABLE users ADD COLUMN photo_user VARCHAR
+
+  CREATE TABLE events (
+  id SERIAL PRIMARY KEY,
+  recipes_id INT,
+  user_id VARCHAR,
+  status VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (recipes_id) REFERENCES recipes(id),
+  FOREIGN KEY (user_id) REFERENCES users(uuid)
+);

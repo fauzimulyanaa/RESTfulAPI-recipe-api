@@ -115,9 +115,10 @@ const getRecipesDetail = async (req, res, next) => {
 };
 
 const createNewRecipe = async (req, res, next) => {
+  console.log("Request Body:", req.body);
+  console.log("Request File:", req.file);
   let { title, description, ingredients, instructions, category_id } = req.body;
   let { uuid } = req.payload;
-
   if (!req.file) {
     return res.status(400).json({ message: "Photo is required" });
   }

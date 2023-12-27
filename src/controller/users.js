@@ -17,7 +17,7 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUsersById = async (req, res) => {
-  const { uuid } = req.payload;
+  const { uuid } = req.params;
 
   try {
     const user = await userModels.getUsersById(uuid);
@@ -34,9 +34,10 @@ const getUsersById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    const { uuid } = req.payload;
+    const { uuid } = req.params;
 
     const users = await userModels.getUsersById(uuid);
+    console.log(users);
 
     if (!users) {
       return res.status(404).json({ message: "User not found" });
@@ -66,7 +67,7 @@ const updateUser = async (req, res) => {
     if (!req.file) {
       updatedData.photo_user = users.photo_user;
 
-      let result = await recipeModel.updateRecipe(updatedData);
+      let result = await userModels.updateUser(updatedData);
 
       if (!result) {
         return res.status(404).json({ messsage: "failed update data" });
