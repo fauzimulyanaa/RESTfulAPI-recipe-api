@@ -10,7 +10,9 @@ const upload = require("../middleware/upload");
 
 // // READ USERS
 router.get("/", usersController.getAllUsers);
+
 router.get("/:uuid", usersController.getUsersById);
+
 router.patch("/update-user/:uuid", Protect, upload.single("photo_user"), usersController.updateUser);
 // router.delete("/:id", usersController.deleteUser);
 
