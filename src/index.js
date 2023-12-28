@@ -9,7 +9,7 @@ const auth = require("./router/auth");
 const event = require("./router/event");
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "*",
   optionsSuccessStatus: 200,
 };
 

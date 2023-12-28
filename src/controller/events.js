@@ -4,7 +4,7 @@ const recipeModel = require("../model/recipes");
 const postEvent = async (req, res) => {
   try {
     let { recipes_id, status } = req.body;
-    let users_id = req.user.uuid;
+    let users_id = req.users.uuid;
 
     if (!recipes_id || !status || !users_id) {
       return res.status(400).json({
@@ -144,7 +144,7 @@ const deleteEventLike = async (req, res) => {
   });
 };
 const getMyBookmark = async (req, res) => {
-  let users_id = req.user.uuid;
+  let users_id = req.users.uuid;
 
   let bookmark = await eventModel.getBookmarkRecipesByUser(users_id);
   let result = bookmark.rows;
@@ -170,7 +170,7 @@ const getMyBookmark = async (req, res) => {
   });
 };
 const getMyLike = async (req, res) => {
-  let users_id = req.user.uuid;
+  let users_id = req.users.uuid;
 
   let like = await eventModel.getLikedRecipesByUser(users_id);
   let result = like.rows;
