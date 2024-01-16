@@ -1,19 +1,18 @@
 const express = require("express");
-const router = express.Router();
-const usersController = require("../controller/users");
-const { Protect } = require("../middleware/private");
+const { getAllUsers, getUsersById, deleteUser, updateUser } = require("../controllers/users");
+const verifyToken = require("../middleware/auth");
+const { mySelf } = require("../middleware/roleUsers");
+const { isActivated } = require("../middleware/isActivated");
 const upload = require("../middleware/upload");
 
-// router.get("/search", usersController.searchUsers);
+const router = express.Router();
 
-// // CREATE NEW USERS
+// All role
+router.get("/", verifyToken, isActivated, getAllUsers);
+router.get("/:id", verifyToken, isActivated, getUsersById);
 
-// // READ USERS
-router.get("/", usersController.getAllUsers);
-
-router.get("/:uuid", usersController.getUsersById);
-
-router.patch("/update-user/:uuid", Protect, upload.single("photo_user"), usersController.updateUser);
-// router.delete("/:id", usersController.deleteUser);
+// Only owner
+router.put("/:id", verifyToken, isActivated, mySelf, upload.single("photo"), updateUser);
+router.delete("/:id", verifyToken, isActivated, mySelf, deleteUser);
 
 module.exports = router;

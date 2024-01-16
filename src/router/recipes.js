@@ -1,24 +1,28 @@
 const express = require("express");
-const router = express.Router();
-const recipesController = require("../controller/recipes");
-
-const { Protect } = require("../middleware/private");
+const { allRecipes, getRecipeById, showRecipeByIdUser, postRecipe, putRecipe, deleteRecipeId, myRecipes, getCountRecipesByUuid, showNewRecipe, showSuggestionRecipe } = require("../controllers/recipes");
+const verifyToken = require("../middleware/auth");
+const { isActivated } = require("../middleware/isActivated");
+const { recipeOwner, usersAndAdmin, onlyAdmin } = require("../middleware/roleUsers");
 const upload = require("../middleware/upload");
+const router = express.Router();
 
-router.get("/detail", Protect, recipesController.getRecipesDetail);
+// All role
+router.get("/", allRecipes);
+router.get("/detail/:id", getRecipeById);
+router.get("/latest", showNewRecipe);
+router.get("/suggestion", showSuggestionRecipe);
+router.get("/:id", verifyToken, isActivated, showRecipeByIdUser);
 
-// CREATE RECIPES
-router.post("/create", Protect, upload.single("photo_recipes"), recipesController.createNewRecipe);
-router.get("/my-recipe", Protect, recipesController.getRecipesUser);
-router.get("/:id", Protect, recipesController.getRecipeById);
+// Only users and admin
+router.post("/", verifyToken, isActivated, usersAndAdmin, upload.single("photo"), postRecipe);
+router.get("/show/myrecipes", verifyToken, isActivated, usersAndAdmin, myRecipes);
+router.get("/count/:id", verifyToken, isActivated, usersAndAdmin, getCountRecipesByUuid);
 
-// READ ALL RECIPES
-router.get("/", Protect, recipesController.getAllRecipes);
+// Only recipe owner
+router.put("/:id", verifyToken, isActivated, recipeOwner, upload.single("photo"), putRecipe);
+router.delete("/:id", verifyToken, isActivated, recipeOwner, deleteRecipeId);
 
-// UPDATE
-router.patch("/update-recipe/:id", Protect, upload.single("photo_recipes"), recipesController.updateRecipe);
-
-// DELETE RECIPES BY ID
-router.delete("/delete-recipe/:id", Protect, recipesController.deleteRecipe);
+// delete recipe by admin
+router.delete("/deleteByAdmin/:id", verifyToken, isActivated, onlyAdmin, deleteRecipeId);
 
 module.exports = router;

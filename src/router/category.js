@@ -1,14 +1,19 @@
 const express = require("express");
+
+const { allCategory, getCategoryId, inputCategory, putCategory, deleteCategoryId } = require("../controllers/category");
+const verifyToken = require("../middleware/auth");
+const { isActivated } = require("../middleware/isActivated");
+const { onlyAdmin } = require("../middleware/roleUsers");
+
 const router = express.Router();
-const categoryController = require("../controller/category");
 
-router.delete("/:id", categoryController.deleteCategory);
-// CREATE CATEGORY
-router.post("/", categoryController.createNewCategory);
+// All role
+router.get("/", verifyToken, isActivated, allCategory);
+router.get("/:id", verifyToken, isActivated, getCategoryId);
 
-// GET ALL CATEGORY
-router.get("/", categoryController.getAllCategory);
-router.get("/:id", categoryController.categoryById);
-router.patch("/:id", categoryController.updateCategory);
+// Only admin
+router.post("/", verifyToken, isActivated, onlyAdmin, inputCategory);
+router.put("/:id", verifyToken, isActivated, onlyAdmin, putCategory);
+router.delete("/:id", verifyToken, isActivated, onlyAdmin, deleteCategoryId);
 
 module.exports = router;

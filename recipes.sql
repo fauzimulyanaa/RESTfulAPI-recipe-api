@@ -131,3 +131,87 @@ SELECT recipes.id, recipes.title, recipes.description, recipes.ingredients, reci
   FOREIGN KEY (recipes_id) REFERENCES recipes(id),
   FOREIGN KEY (user_id) REFERENCES users(uuid)
 );
+
+
+
+SELECT * FROM events
+
+INSERT INTO events (status) VALUES ( 'like')
+
+DROP TABLE users;
+
+DROP TABLE users CASCADE;
+
+CREATE TABLE category(
+    "id_category" SERIAL NOT NULL,
+    name varchar NOT NULL,
+    PRIMARY KEY(id_category)
+);
+
+CREATE TABLE comments(
+    "id_comment" SERIAL NOT NULL,
+    "id_recipe" integer,
+    "id_user" varchar,
+    commentar varchar NOT NULL,
+    "created_at" timestamp without time zone DEFAULT now(),
+    PRIMARY KEY(id_comment)
+)
+
+CREATE TABLE event(
+    id SERIAL NOT NULL,
+    "recipes_id" integer,
+    "users_id" varchar,
+    status varchar,
+    "created_at" timestamp without time zone DEFAULT now(),
+    PRIMARY KEY(id),
+    CONSTRAINT fk_recipes_1 FOREIGN key("recipes_id") REFERENCES recipes("id_recipe")
+)
+
+CREATE TABLE recipes (
+    "id_recipe" SERIAL NOT NULL,
+    photo VARCHAR,
+    title VARCHAR NOT NULL,
+    ingredients VARCHAR NOT NULL,
+    "created_time" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    "updated_time" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    "id_user" INTEGER NOT NULL,
+    "id_category" INTEGER NOT NULL,
+    uuid VARCHAR,
+    PRIMARY KEY (id_recipe),
+    CONSTRAINT fk_id_category FOREIGN KEY ("id_category") REFERENCES category("id_category"),
+    CONSTRAINT fk_id_user FOREIGN KEY ("id_user") REFERENCES users("id_user"),
+    CONSTRAINT fk_uuid FOREIGN KEY (uuid) REFERENCES users("uuid")
+);
+
+CREATE TABLE recipes(
+    "id_recipe" SERIAL NOT NULL,
+    photo varchar,
+    title varchar NOT NULL,
+    ingredients varchar NOT NULL,
+    "created_time" timestamp with time zone DEFAULT now(),
+    "updated_time" timestamp with time zone DEFAULT now(),
+    "id_user" integer NOT NULL,
+    "id_category" integer NOT NULL,
+    uuid varchar,
+    PRIMARY KEY(id_recipe),
+    CONSTRAINT fk_id_category FOREIGN key("id_category") REFERENCES category("id_category"),
+    CONSTRAINT fk_id_user FOREIGN key("id_user") REFERENCES users("id_user"),
+    CONSTRAINT fk_uuid FOREIGN key(uuid) REFERENCES users(uuid)
+);
+
+CREATE TABLE users (
+    "id_user" SERIAL NOT NULL,
+    name VARCHAR NOT NULL,
+    email VARCHAR NOT NULL,
+    password VARCHAR NOT NULL,
+    "phone_number" VARCHAR,
+    photo VARCHAR DEFAULT 'https://res.cloudinary.com/dzetef1x0/image/upload/v1699583201/recipes/a28xnmhorkr3rdozlokw.jpg'::VARCHAR,
+    "created_time" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "updated_time" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    level INTEGER DEFAULT 2,
+    uuid VARCHAR,
+    "is_active" BOOLEAN DEFAULT FALSE,
+    otp INTEGER,
+    PRIMARY KEY (id_user),
+    CONSTRAINT unique_uuid UNIQUE (uuid)
+);
