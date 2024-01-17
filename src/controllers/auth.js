@@ -45,24 +45,24 @@ const authController = {
     });
   },
 
-  // setActivateUser: async (req, res, next) => {
-  //   let id_user = req.params.id;
-  //   let checkUser = await checkUserIsActive(id_user);
+  setActivateUser: async (req, res, next) => {
+    let id_user = req.params.id;
+    let checkUser = await checkUserIsActive(id_user);
 
-  //   if (checkUser.rows.length === 0) {
-  //     return res.status(200).json({
-  //       code: 200,
-  //       message: "User not found or user has been activated!",
-  //     });
-  //   }
+    if (checkUser.rows.length === 0) {
+      return res.status(200).json({
+        code: 200,
+        message: "User not found or user has been activated!",
+      });
+    }
 
-  //   await activateUser(checkUser.rows[0].uuid);
+    await activateUser(checkUser.rows[0].uuid);
 
-  //   res.status(200).json({
-  //     code: 200,
-  //     message: "User activated successfully",
-  //   });
-  // },
+    res.status(200).json({
+      code: 200,
+      message: "User activated successfully",
+    });
+  },
 
   login: async (req, res) => {
     let { email, password } = req.body;
@@ -90,6 +90,14 @@ const authController = {
       return res.status(400).json({
         code: 400,
         message: "Incorrect password, please enter the correct password",
+      });
+    }
+
+    // Check email is activated?
+    if (checkEmail.rows[0].is_active === false) {
+      return res.status(400).json({
+        code: 400,
+        message: "Email not active, please check your email to activated",
       });
     }
 
