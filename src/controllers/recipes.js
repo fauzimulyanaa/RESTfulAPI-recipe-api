@@ -174,35 +174,6 @@ const recipesController = {
       });
     }
 
-    // //push notif
-    // const options = {
-    //   method: "POST",
-    //   url: "https://onesignal.com/api/v1/notifications",
-    //   headers: {
-    //     accept: "application/json",
-    //     Authorization: "Basic NDBkYjM4MWYtYjQzMC00ZjMwLWI2Y2YtYTUxZjdkMGM4ZDIz",
-    //     "content-type": "application/json",
-    //   },
-    //   data: {
-    //     app_id: "9fed0bad-fea6-4dc9-b4d5-d23857a12b7b",
-    //     name: `There's a new recipe`,
-    //     filters: [{ field: "tag", key: "userID", relation: "!=", value: uuid }],
-    //     headings: {
-    //       en: `There's a new recipe!`,
-    //       id: "Ada resep baru!",
-    //     },
-    //     contents: { en: `${req.user.name} uploaded a new recipe, check it out 😊!`, id: `${req.user.name} Membuat resep baru, segera cek 😊!` },
-    //   },
-    // };
-
-    axios
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-
     res.status(200).json({
       code: 200,
       message: "Success input data!",
