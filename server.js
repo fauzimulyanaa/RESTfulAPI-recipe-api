@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const xss = require("xss-clean");
 
 const Router = require("./src/router");
 const app = express();
@@ -24,7 +23,7 @@ app.use(
     crossOriginResourcePolicy: false,
   })
 );
-app.use(xss()); // data sanitization against site script xss
+// data sanitization against site script xss
 app.use(express.json());
 
 app.get("/", (req, res, next) => {
