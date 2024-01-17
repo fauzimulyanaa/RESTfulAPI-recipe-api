@@ -148,6 +148,13 @@ CREATE TABLE category(
     PRIMARY KEY(id_category)
 );
 
+-- Insert into the category table
+INSERT INTO category (name) VALUES
+  ('maincourse'),
+  ('appetizer'),
+  ('dessert');
+
+
 CREATE TABLE comments(
     "id_comment" SERIAL NOT NULL,
     "id_recipe" integer,
