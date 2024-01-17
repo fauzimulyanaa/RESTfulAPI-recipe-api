@@ -93,14 +93,6 @@ const authController = {
       });
     }
 
-    // Check email is activated?
-    if (checkEmail.rows[0].is_active === false) {
-      return res.status(400).json({
-        code: 400,
-        message: "Email not active, please check your email to activated",
-      });
-    }
-
     // Generate token
     const accessToken = jwt.sign(checkEmail.rows[0], process.env.JWT_SECRET, { expiresIn: "1Y" });
     const refreshToken = jwt.sign(checkEmail.rows[0], process.env.JWT_REFRESH_SECRET, { expiresIn: "1Y" });
