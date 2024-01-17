@@ -39,43 +39,30 @@ const authController = {
       });
     }
 
-    // Activation Email
-    let user = await getUserByEmail(data.email);
-    let sendEmailToUser = await sendMail(user.rows[0].email, user.rows[0].uuid);
-
-    if (!sendEmailToUser) {
-      await createUser.rollback();
-      return res.status(500).json({
-        code: 500,
-        error: "Send email failed",
-        message: "Register Failed",
-      });
-    }
-
     res.status(200).json({
       code: 200,
-      message: "Register success, please check your email to activate!",
+      message: "Register success!",
     });
   },
 
-  setActivateUser: async (req, res, next) => {
-    let id_user = req.params.id;
-    let checkUser = await checkUserIsActive(id_user);
+  // setActivateUser: async (req, res, next) => {
+  //   let id_user = req.params.id;
+  //   let checkUser = await checkUserIsActive(id_user);
 
-    if (checkUser.rows.length === 0) {
-      return res.status(200).json({
-        code: 200,
-        message: "User not found or user has been activated!",
-      });
-    }
+  //   if (checkUser.rows.length === 0) {
+  //     return res.status(200).json({
+  //       code: 200,
+  //       message: "User not found or user has been activated!",
+  //     });
+  //   }
 
-    await activateUser(checkUser.rows[0].uuid);
+  //   await activateUser(checkUser.rows[0].uuid);
 
-    res.status(200).json({
-      code: 200,
-      message: "User activated successfully",
-    });
-  },
+  //   res.status(200).json({
+  //     code: 200,
+  //     message: "User activated successfully",
+  //   });
+  // },
 
   login: async (req, res) => {
     let { email, password } = req.body;

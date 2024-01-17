@@ -4,7 +4,7 @@ const { register, setActivateUser, login, refreshToken, forgotPassword, resetOtp
 const router = express.Router();
 
 router.post("/register", register);
-router.get("/activate/:id", setActivateUser);
+// router.get("/activate/:id", setActivateUser);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
